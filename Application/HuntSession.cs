@@ -59,7 +59,7 @@ namespace Application
 
             foreach(var pos in positives)
             {
-                pos.GetProfit(result.Profit);
+                pos.SetProfit(result.Profit);
 
                 var negatives = GetUserWithoutProfit();
 
@@ -73,7 +73,7 @@ namespace Application
 
                     result.Payments.Add(payment);
 
-                    neg.GetProfit(result.Profit);
+                    neg.SetProfit(result.Profit);
 
                     negatives = GetUserWithoutProfit();
                 }
@@ -91,6 +91,8 @@ namespace Application
 
             foreach(var pos in positives)
             {
+                pos.SetWaste(result.Profit);
+
                 if (!negatives.Any()) break;
                 while(negatives.Any() && pos.HasFound())
                 {

@@ -25,7 +25,7 @@ namespace Application
             result.Append("Individual Profit: " + Profit + "\n");
             result.Append("Payments:  \n" );
 
-            Payments.ForEach(x=> result.Append($"From : {x.From.Name} - To: {x.To.Name} -- Value: {x.Value} \n"));
+            Payments.ForEach(x=> result.Append($"From : {x.From.Name} - To: {x.To.Name} -- Value: {Math.Floor(x.Value)} \n"));
 
             return result.ToString();
         }

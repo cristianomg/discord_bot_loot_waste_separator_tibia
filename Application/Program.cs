@@ -49,8 +49,6 @@ namespace bot_discord_loot.Application
             else
             {
                 var message = e.Message.Content;
-                Console.WriteLine("Message");
-                Console.WriteLine(message);
                 var huntSession = new HuntSessionFactory().Create(message);
                 
                 if (huntSession == null){

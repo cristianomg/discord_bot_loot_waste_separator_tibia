@@ -38,7 +38,7 @@ namespace Application
             => Balance > 0;
         public bool HasWaste()
             => Balance < 0;
-        public void GetProfit(decimal profit) 
+        public void SetProfit(decimal profit) 
         {
             var valueToComplete = profit - IndividualProfit;
 
@@ -52,6 +52,15 @@ namespace Application
                 IndividualProfit += Balance;
                 Balance = 0;
             }
+        }
+
+        public void SetWaste(decimal waste)
+        {
+            if (IndividualProfit != waste){
+                IndividualProfit = waste;
+                Balance += Math.Abs(waste);
+            }
+
         }
     }
 }
