@@ -5,14 +5,6 @@ namespace Application
 {
     public class HuntSessionFactory
     {
-        private readonly Dictionary<string, bool> keyValueParts
-            = new Dictionary<string, bool>() {
-                { "Session:", true },
-                { "Loot Type:", true },
-                { "Loot:", true },
-                { "Supplies:", true },
-                { "Balance:", true }
-            };
         public HuntSessionFactory()
         {
 
@@ -20,6 +12,7 @@ namespace Application
 
         public HuntSession? Create(string clipboard)
         {
+            if (string.IsNullOrEmpty(clipboard?.Trim())) return default;
 
             var parts = clipboard.Split("\n");
 
@@ -39,18 +32,19 @@ namespace Application
 
 
         public string[] GetSessionPart(string[] parts)
-            => parts.Skip(1).Take(5).ToArray();
+            => parts.Take(6).ToArray();
 
         public string[] GetUsersPart(string[] parts)
             => parts.Skip(6).ToArray();
 
         public bool Verify(string[] parts) =>
-            parts.Count() == 5
-            && parts[0].Contains("Session:")
-            && parts[1].Contains("Loot Type:")
-            && parts[2].Contains("Loot:")
-            && parts[3].Contains("Supplies:")
-            && parts[4].Contains("Balance:");
+            parts.Count() == 6
+            && parts[0].Contains("Session data:")
+            && parts[1].Contains("Session:")
+            && parts[2].Contains("Loot Type:")
+            && parts[3].Contains("Loot:")
+            && parts[4].Contains("Supplies:")
+            && parts[5].Contains("Balance:");
 
 
 

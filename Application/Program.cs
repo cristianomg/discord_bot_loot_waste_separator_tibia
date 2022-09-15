@@ -12,14 +12,21 @@ namespace bot_discord_loot.Application
         static void Main(string[] args)
         {
             DotEnv.Load();
-            RunBotAsync().GetAwaiter().GetResult();
+            var token = Environment.GetEnvironmentVariable("private_key");
+            if(!string.IsNullOrEmpty(token)){
+                Console.WriteLine("Iniciando bot...");
+                RunBotAsync(token!).GetAwaiter().GetResult();
+            }
+            else 
+            Console.WriteLine("Token não encontrado.");
         }
 
-        public static async Task RunBotAsync()
+        public static async Task RunBotAsync(string token)
         {
+
             var config = new DiscordConfiguration
             {
-                Token = Environment.GetEnvironmentVariable("private_key"),
+                Token = token,
                 TokenType = TokenType.Bot,
                 ReconnectIndefinitely = true,
                 GatewayCompressionLevel = GatewayCompressionLevel.Stream,
@@ -42,11 +49,14 @@ namespace bot_discord_loot.Application
             else
             {
                 var message = e.Message.Content;
-
+                Console.WriteLine("Message");
+                Console.WriteLine(message);
                 var huntSession = new HuntSessionFactory().Create(message);
                 
-                if (huntSession == null) 
-                    await e.Channel.SendMessageAsync("Clipboard invalido...");
+                if (huntSession == null){
+                    await Task.CompletedTask;
+                    return;
+                } 
 
                 Console.WriteLine("Enviando calculo.");
 

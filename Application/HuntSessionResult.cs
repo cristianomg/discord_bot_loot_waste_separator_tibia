@@ -1,24 +1,33 @@
+using System.Text;
+
 namespace Application
 {
     public class HuntSessionResult 
     {
-        public HuntSessionResult(decimal balance, List<HuntUser> users)
+        public HuntSessionResult(string sessionData, decimal balance, List<HuntUser> users)
         {
+            SessionData = sessionData;
             Profit = balance / users.Count;
+            TotalUsers = users.Count;
         }
-        public decimal Profit { get; set; }    
-        public List<SessionPayment> Payments { get; set; } = new List<SessionPayment>();
+        public int TotalUsers { get; private set; }
+        public string SessionData { get; private set; }
+        public decimal Profit { get; private set; }    
+        public List<SessionPayment> Payments { get; } = new List<SessionPayment>();
 
 
         public override string ToString()
         {
-            var result = @$"Profit: {Profit}
-                        Payments:
-                           ";
+            var result = new StringBuilder();
 
-            Payments.ForEach(x=> result += $"From : {x.From.Name} - To: {x.To.Name} -- Value: {x.Value} \n");
+            result.Append(SessionData + "\n");
+            result.Append("Total Profit: " + Profit * TotalUsers + "\n");
+            result.Append("Individual Profit: " + Profit + "\n");
+            result.Append("Payments:  \n" );
 
-            return result;
+            Payments.ForEach(x=> result.Append($"From : {x.From.Name} - To: {x.To.Name} -- Value: {x.Value} \n"));
+
+            return result.ToString();
         }
 
     }

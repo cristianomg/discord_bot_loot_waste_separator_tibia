@@ -3,6 +3,7 @@ namespace Application
 {
     public class HuntSession
     {
+        public string SessionData { get; private set; }
         public string Time { get; private set; }
         public string LootType { get; private set; }
         public decimal Loot { get; private set; }
@@ -12,11 +13,12 @@ namespace Application
 
         public HuntSession(string[] parts)
         {
-            Time = parts[0].Replace("Session:", "").Trim();
-            LootType = parts[1].Replace("Loot Type:", "").Trim();
-            Loot = Convert.ToDecimal(parts[2].Replace("Loot:", "").Trim());
-            Supplies = Convert.ToDecimal(parts[3].Replace("Supplies:", "").Trim());
-            Balance = Convert.ToDecimal(parts[4].Replace("Balance:", "").Trim());
+            SessionData = parts[0].Trim();
+            Time = parts[1].Replace("Session:", "").Trim();
+            LootType = parts[2].Replace("Loot Type:", "").Trim();
+            Loot = Convert.ToDecimal(parts[3].Replace("Loot:", "").Trim());
+            Supplies = Convert.ToDecimal(parts[4].Replace("Supplies:", "").Trim());
+            Balance = Convert.ToDecimal(parts[5].Replace("Balance:", "").Trim());
         }
 
         public List<HuntUser> Users { get; } = new List<HuntUser>();
@@ -41,7 +43,7 @@ namespace Application
 
         public HuntSessionResult CalculateSession() 
         {
-            var sessionResult = new HuntSessionResult(Balance, Users);
+            var sessionResult = new HuntSessionResult(SessionData, Balance, Users);
         
             return sessionResult.Profit > 0 ? 
                 CalculateWithProfit(sessionResult) :
@@ -76,14 +78,8 @@ namespace Application
                     negatives = GetUserWithoutProfit();
                 }
             }
-
- 
-            
-
             return result;
         }
-
-
         private HuntSessionResult CalculateWithoutProfit(HuntSessionResult result)
         {
             return result;
