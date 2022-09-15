@@ -16,9 +16,9 @@ namespace Application
             SessionData = parts[0].Trim();
             Time = parts[1].Replace("Session:", "").Trim();
             LootType = parts[2].Replace("Loot Type:", "").Trim();
-            Loot = Convert.ToDecimal(parts[3].Replace("Loot:", "").Trim());
-            Supplies = Convert.ToDecimal(parts[4].Replace("Supplies:", "").Trim());
-            Balance = Convert.ToDecimal(parts[5].Replace("Balance:", "").Trim());
+            Loot = Convert.ToDecimal(parts[3].Replace("Loot:", "").Replace(',', '.').Trim());
+            Supplies = Convert.ToDecimal(parts[4].Replace("Supplies:", "").Replace(',', '.').Trim());
+            Balance = Convert.ToDecimal(parts[5].Replace("Balance:", "").Replace(',', '.').Trim());
         }
 
         public List<HuntUser> Users { get; } = new List<HuntUser>();
@@ -52,7 +52,7 @@ namespace Application
 
         private HuntSessionResult CalculateWithProfit(HuntSessionResult result)
         {
-            var positives = Users.Where(x=>x.Balance > 0);
+            var positives = Users.Where(x=>x.HasFound());
 
             Func<IEnumerable<HuntUser>> GetUserWithoutProfit = () =>
                 Users.Where(x=>x.IndividualProfit < result.Profit).OrderBy(x=>x.Balance);
@@ -63,7 +63,7 @@ namespace Application
 
                 var negatives = GetUserWithoutProfit();
 
-                while(negatives.Any() && pos.Balance > 0)
+                while(negatives.Any() && pos.HasFound())
                 {
                     var neg = negatives.First();
 
@@ -82,6 +82,28 @@ namespace Application
         }
         private HuntSessionResult CalculateWithoutProfit(HuntSessionResult result)
         {
+            var positives = Users.Where(x=>x.HasFound());
+
+            Func<Queue<HuntUser>> GetUserWithNegativeBalance = () =>
+                new Queue<HuntUser>(Users.Where(x=>x.Balance < 0).OrderBy(x=>x.Balance));
+
+            var negatives = GetUserWithNegativeBalance();
+
+            foreach(var pos in positives)
+            {
+                if (!negatives.Any()) break;
+                while(negatives.Any() && pos.HasFound())
+                {
+                    var neg = negatives.First();
+                    var payment = new SessionPayment(pos, neg);
+                    payment.Transfer(0);
+
+                    result.Payments.Add(payment);
+
+                    if (!neg.HasWaste())
+                        negatives.Dequeue();
+                }
+            }
             return result;
         }
 
