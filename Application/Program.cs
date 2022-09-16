@@ -1,4 +1,5 @@
-﻿using Application;
+﻿using System.Globalization;
+using Application;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
@@ -11,9 +12,12 @@ namespace bot_discord_loot.Application
 
         static void Main(string[] args)
         {
+            if (Thread.CurrentThread.CurrentCulture.Name == "pt-BR")
+                Thread.CurrentThread.CurrentCulture = new  CultureInfo("en-US");
             DotEnv.Load();
             var token = Environment.GetEnvironmentVariable("private_key");
             if(!string.IsNullOrEmpty(token)){
+
                 Console.WriteLine("Iniciando bot...");
                 RunBotAsync(token!).GetAwaiter().GetResult();
             }
@@ -49,6 +53,9 @@ namespace bot_discord_loot.Application
             else
             {
                 var message = e.Message.Content;
+                Console.WriteLine("Mensagem recebida: ");
+                Console.WriteLine(message);
+
                 var huntSession = new HuntSessionFactory().Create(message);
                 
                 if (huntSession == null){

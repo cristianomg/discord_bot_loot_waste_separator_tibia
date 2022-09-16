@@ -1,0 +1,17 @@
+version: '3'
+ 
+services:
+  bot_loot_tibia:
+    image: bot_loot_tibia
+    container_name: 
+      bot_loot_tibia
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+     driver: bridge

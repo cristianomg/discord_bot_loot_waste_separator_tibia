@@ -12,9 +12,9 @@ namespace Application
         public HuntUser(string[] userParts)
         {
             Name = userParts[0];
-            Loot = Convert.ToDecimal(userParts[1].Replace("Loot:", "").Replace(',', '.').Trim());
-            Supplies = Convert.ToDecimal(userParts[2].Replace("Supplies:", "").Replace(',', '.').Trim());
-            Balance = Convert.ToDecimal(userParts[3].Replace("Balance:", "").Replace(',', '.').Trim());
+            Loot = Convert.ToDecimal(userParts[1].Replace("Loot:", "").Trim());
+            Supplies = Convert.ToDecimal(userParts[2].Replace("Supplies:", "").Trim());
+            Balance = Convert.ToDecimal(userParts[3].Replace("Balance:", "").Trim());
         }
 
         public void ReceiveFund(decimal fund) 

@@ -12,13 +12,25 @@ namespace Application
 
         public HuntSession? Create(string clipboard)
         {
-            if (string.IsNullOrEmpty(clipboard?.Trim())) return default;
+            Console.WriteLine("Criando sessao");
 
-            var parts = clipboard.Split("\n");
+            if (string.IsNullOrEmpty(clipboard?.Trim()))
+            {
+                Console.WriteLine("Clipboard vazio");
+                return default;
+            } 
+
+            var parts = clipboard.Split(Environment.NewLine);
+
+            Console.WriteLine("Separado as partes");
 
             var sessionPart = GetSessionPart(parts);
 
-            if (!Verify(sessionPart)) return default;
+            if (!Verify(sessionPart)) 
+            {
+                Console.WriteLine("Sessao invalida.");
+                return default;
+            }
 
             var huntSession = new HuntSession(sessionPart);
 
@@ -26,6 +38,7 @@ namespace Application
 
             huntSession.AddUsers(usersPart);
 
+            Console.WriteLine("Sessao criada com sucesso.");
             return huntSession;
         }
 

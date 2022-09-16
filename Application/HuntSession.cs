@@ -16,9 +16,9 @@ namespace Application
             SessionData = parts[0].Trim();
             Time = parts[1].Replace("Session:", "").Trim();
             LootType = parts[2].Replace("Loot Type:", "").Trim();
-            Loot = Convert.ToDecimal(parts[3].Replace("Loot:", "").Replace(',', '.').Trim());
-            Supplies = Convert.ToDecimal(parts[4].Replace("Supplies:", "").Replace(',', '.').Trim());
-            Balance = Convert.ToDecimal(parts[5].Replace("Balance:", "").Replace(',', '.').Trim());
+            Loot = Convert.ToDecimal(parts[3].Replace("Loot:", "").Trim());
+            Supplies = Convert.ToDecimal(parts[4].Replace("Supplies:", "").Trim());
+            Balance = Convert.ToDecimal(parts[5].Replace("Balance:", "").Trim());
         }
 
         public List<HuntUser> Users { get; } = new List<HuntUser>();
@@ -43,6 +43,7 @@ namespace Application
 
         public HuntSessionResult CalculateSession() 
         {
+            Console.WriteLine("Iniciando calculo de sessao");
             var sessionResult = new HuntSessionResult(SessionData, Balance, Users);
         
             return sessionResult.Profit > 0 ? 
@@ -78,6 +79,8 @@ namespace Application
                     negatives = GetUserWithoutProfit();
                 }
             }
+
+            Console.WriteLine("Finalizando calculo de sessao com profit");
             return result;
         }
         private HuntSessionResult CalculateWithoutProfit(HuntSessionResult result)
@@ -106,6 +109,7 @@ namespace Application
                         negatives.Dequeue();
                 }
             }
+            Console.WriteLine("Finalizando calculo de sessao sem profit");
             return result;
         }
 
