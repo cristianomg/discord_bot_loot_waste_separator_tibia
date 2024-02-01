@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Application;
 using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
 
@@ -15,8 +16,9 @@ namespace bot_discord_loot.Application
             if (Thread.CurrentThread.CurrentCulture.Name == "pt-BR")
                 Thread.CurrentThread.CurrentCulture = new  CultureInfo("en-US");
             DotEnv.Load();
-            var token = Environment.GetEnvironmentVariable("private_key");
-            if(!string.IsNullOrEmpty(token)){
+            //var token = Environment.GetEnvironmentVariable("private_key");
+            var token = "MTE4NTAzMDQ0Mjk0OTMwMDIzNA.GmXlTi.G3JM44BO7D6iWkI0vp8kRCPlmLqpvJTkoHlOl0";
+            if (!string.IsNullOrEmpty(token)){
 
                 Console.WriteLine("Iniciando bot...");
                 RunBotAsync(token!).GetAwaiter().GetResult();
@@ -35,11 +37,24 @@ namespace bot_discord_loot.Application
                 ReconnectIndefinitely = true,
                 GatewayCompressionLevel = GatewayCompressionLevel.Stream,
                 AutoReconnect = true,
-                MinimumLogLevel = LogLevel.Debug,
+                MinimumLogLevel = LogLevel.Error,
+                Intents = DiscordIntents.All
             };
 
             _client = new DiscordClient(config);
             _client.MessageCreated += Cliente_Mensagem;
+
+            _client.SocketErrored += (sender, args) =>
+            {
+                Console.Error.WriteLine($"Erro de soquete: {args.Exception}");
+                return Task.CompletedTask;
+            };
+
+            _client.ClientErrored += (sender, args) =>
+            {
+                Console.Error.WriteLine($"Erro do cliente: {args.Exception}");
+                return Task.CompletedTask;
+            };
 
             await _client.ConnectAsync();
 
@@ -58,8 +73,8 @@ namespace bot_discord_loot.Application
 
                 var huntSession = new HuntSessionFactory().Create(message);
                 
-                if (huntSession == null){
-                    await Task.CompletedTask;
+                if (huntSession == null)
+                {
                     return;
                 } 
 
@@ -67,11 +82,25 @@ namespace bot_discord_loot.Application
 
                 var sessionResult = huntSession?.CalculateSession();
 
-                await e.Channel.SendMessageAsync(sessionResult?.ToString());
+                if (sessionResult == null)
+                {
+                    return;
+                }
 
-                Console.WriteLine("Calculo enviado.");
+                var embed = new DiscordEmbedBuilder()
+                {
+                    Title = sessionResult.SessionData,
+                    Description = @$"Profit total: {sessionResult.TotalProfit}
+                                     Profit individual: {sessionResult.Profit}",
+                    Color = DiscordColor.Blue
+                };
 
+                sessionResult.Payments.ForEach(x =>
+                {
+                    embed.AddField($"From: {x.From.Name} To: {x.To.Name}", x.BankMessage, inline:false);
+                });
 
+                await e.Message.RespondAsync(embed: embed);
             }
         }
     }

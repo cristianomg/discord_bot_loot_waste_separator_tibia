@@ -20,7 +20,7 @@ namespace Application
                 return default;
             } 
 
-            var parts = clipboard.Split(Environment.NewLine);
+            var parts = clipboard.Split("\n");
 
             Console.WriteLine("Separado as partes");
 

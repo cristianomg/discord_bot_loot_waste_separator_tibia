@@ -5,6 +5,7 @@ namespace Application
         public HuntUser From {get; set;}
         public HuntUser To {get; set;}
         public decimal Value {get; set;}
+        public string BankMessage => $"transfer {Value} to {To.Name}";
 
         public SessionPayment(HuntUser from, HuntUser to)
         {
@@ -18,6 +19,5 @@ namespace Application
 
             To.ReceiveFund(Value);
         }
-
     }
 }
