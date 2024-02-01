@@ -16,8 +16,7 @@ namespace bot_discord_loot.Application
             if (Thread.CurrentThread.CurrentCulture.Name == "pt-BR")
                 Thread.CurrentThread.CurrentCulture = new  CultureInfo("en-US");
             DotEnv.Load();
-            //var token = Environment.GetEnvironmentVariable("private_key");
-            var token = "MTE4NTAzMDQ0Mjk0OTMwMDIzNA.GmXlTi.G3JM44BO7D6iWkI0vp8kRCPlmLqpvJTkoHlOl0";
+            var token = Environment.GetEnvironmentVariable("private_key");
             if (!string.IsNullOrEmpty(token)){
 
                 Console.WriteLine("Iniciando bot...");
